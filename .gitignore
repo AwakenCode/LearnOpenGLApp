@@ -1,0 +1,60 @@
+# Build artifacts
+*.o
+*.obj
+*.so
+*.dll
+*.dylib
+*.exe
+*.out
+*.a
+*.lib
+
+# CMake build directory
+/build/
+/CMakeFiles/
+/cmake-build-debug/
+/CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Visual Studio files
+*.vcxproj*
+*.sln
+*.pdb
+*.idb
+*.ipch
+*.aps
+*.ncb
+*.opendb
+*.tlog
+*.log
+*.user
+*.suo
+*.cache
+*.VC.db
+*.VC.VC.opendb
+
+# Xcode
+*.xcworkspace
+*.xcodeproj
+*.xcuserdata
+*.xcuserstate
+
+# Qt
+*.pro.user
+*.qmake.stash
+*.qmake.cache
+moc_*.cpp
+ui_*.h
+qrc_*.cpp
+
+# Other editors
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# OS-specific
+.DS_Store
+Thumbs.db
