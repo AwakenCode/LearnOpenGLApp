@@ -15,7 +15,7 @@ file(GLOB GLAD_SRC libs/glad/src/*.c)
 include_directories(libs/glm)
 
 # Source files
-file(GLOB SRC_FILES src/*.cpp)
+file(GLOB_RECURSE SRC_FILES src/*.cpp)
 
 # Create executable
 add_executable(LearnOpenGLApp ${SRC_FILES} ${GLAD_SRC})

@@ -1,27 +1,24 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include "shader/Shader.h"
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
     glViewport(0, 0, width, height);
 }
 
-int main() {
-    // Инициализация GLFW
-    if (!glfwInit()) {
-        std::cerr << "Не удалось инициализировать GLFW\n";
-        return -1;
-    }
-
-    // Настройки OpenGL версии
+int main()
+{
+    glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    // Создание окна
-    GLFWwindow* window = glfwCreateWindow(800, 600, "Hello OpenGL", nullptr, nullptr);
-    if (window == nullptr) {
-        std::cerr << "Не удалось создать окно GLFW\n";
+    GLFWwindow* window = glfwCreateWindow(800, 600, "Triangle", nullptr, nullptr);
+    if (!window)
+    {
+        std::cerr << "Couldn't create window\n";
         glfwTerminate();
         return -1;
     }
@@ -29,26 +26,59 @@ int main() {
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    // Загрузка всех функций OpenGL через GLAD
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        std::cerr << "Не удалось инициализировать GLAD\n";
+    if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress))
+    {
+        std::cerr << "Couldn't init GLAD\n";
         return -1;
     }
 
-    // Главный цикл
-    while (!glfwWindowShouldClose(window)) {
-        // Очистка экрана цветом
-        glClearColor(0.2f, 0.3f, 0.4f, 1.0f); // цвет фона
+    // triangle vertices
+    float vertices[] = {
+            -0.5, -0.5, 0, // left
+            0.5, -0.5, 0, // right
+            0, 0.5, 0 // top
+    };
+
+    unsigned int VBO, VAO;
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+
+    glBindVertexArray(VAO);
+
+    // copy vertices into opengl buffer
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    // tell opengl how to read vertices
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+    glEnableVertexAttribArray(0);
+
+    // unbind
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    Shader shader {"shaders/vertex.glsl", "shaders/fragment.glsl"};
+
+    // main loop
+    while (!glfwWindowShouldClose(window))
+    {
+        glClearColor(0.1, 0.1, 0.1, 1);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // Смена кадров и обработка событий
+        // draw triangle
+        shader.use();
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
-    // Очистка ресурсов
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteProgram(shader.getId());
+
     glfwDestroyWindow(window);
     glfwTerminate();
-
     return 0;
 }
