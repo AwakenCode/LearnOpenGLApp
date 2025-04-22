@@ -7,9 +7,10 @@ class Shader
 public:
     Shader(const std::string& vertexPath, const std::string& fragmentPath);
 
-    unsigned int getId() const;
+    [[nodiscard]] unsigned int getId() const;
 
     void use() const;
+    void setFloat(std::string name, float value) const;
 
 private:
     unsigned int ID;
